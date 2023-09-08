@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+  namespace: {{ .Values.namespace }}
+  labels: {{ include "common.labels" . | nindent 6 }}
+spec:
+  selector:
+    matchLabels: {{ include "common.labels" . | nindent 8 }}
+  template:
+    metadata:
+      labels: {{ include "common.labels" . | nindent 10 }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}
+        image: {{ .Values.image }}
+        ports:
+          - containerPort: {{ .Values.port }}
+        resources: {{ toYaml .Values.resources | nindent 12 }}
+        imagePullPolicy: Always
+        env:
+            - name: PRIVATE_KEY
+              value: {{ .Values.privateKey | quote }}
